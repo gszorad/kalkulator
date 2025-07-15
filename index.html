@@ -1,998 +1,170 @@
-<!DOCTYPE html>
-<html lang="hu">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI és Automatizációs Megoldások - Megtakarítás Kalkulátor</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            text-align: center;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
-        }
-        
-        .header h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            font-size: 18px;
-            opacity: 0.9;
-        }
-        
-        .content {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 40px;
-        }
-        
-        .screen {
-            display: none;
-        }
-        
-        .screen.active {
-            display: block;
-            animation: fadeIn 0.3s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .category {
-            margin-bottom: 30px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .category.expanded {
-            border-color: #667eea;
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
-        }
-        
-        .category-title {
-            background: #f8f9fa;
-            padding: 20px 25px;
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.3s ease;
-        }
-        
-        .category-title:hover {
-            background: #eef1f5;
-        }
-        
-        .category.expanded .category-title {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .category-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        
-        .category.expanded .category-content {
-            max-height: 3000px;
-        }
-        
-        .category-description {
-            padding: 20px 25px;
-            background: #f8f9fa;
-            color: #555;
-            line-height: 1.6;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .category-description strong {
-            color: #333;
-            display: block;
-            margin-bottom: 8px;
-            font-size: 18px;
-        }
-        
-        .category-icon {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        .category.expanded .category-icon {
-            background: white;
-            color: #667eea;
-        }
-        
-        .category-expand-icon {
-            margin-left: auto;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s ease;
-        }
-        
-        .category.expanded .category-expand-icon {
-            transform: rotate(180deg);
-        }
-        
-        .solution-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            margin: 10px 25px;
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-        
-        .solution-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
-        }
-        
-        .solution-header {
-            padding: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
-        }
-        
-        .solution-header:hover {
-            background: #f8f9fa;
-        }
-        
-        .solution-title {
-            font-weight: 600;
-            color: #333;
-            font-size: 16px;
-            flex: 1;
-        }
-        
-        .expand-icon {
-            width: 24px;
-            height: 24px;
-            background: #e0e0e0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        
-        .solution-card.expanded .expand-icon {
-            background: #667eea;
-            color: white;
-            transform: rotate(180deg);
-        }
-        
-        .solution-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        
-        .solution-card.expanded .solution-content {
-            max-height: 500px;
-        }
-        
-        .solution-description {
-            padding: 0 20px 20px 20px;
-            color: #555;
-            line-height: 1.6;
-        }
-        
-        .calculate-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0 20px 20px 20px;
-        }
-        
-        .calculate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .calculator-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            margin-top: 30px;
-        }
-        
-        .calculator-section h3 {
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .calculator-icon {
-            width: 24px;
-            height: 24px;
-            background: #667eea;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .result-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 12px;
-            margin-top: 30px;
-            text-align: center;
-        }
-        
-        .result-box h2 {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-        
-        .result-box p {
-            font-size: 18px;
-            opacity: 0.9;
-        }
-        
-        .hourly-calculator {
-            background: #e8eaf6;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        
-        .hourly-result {
-            font-size: 20px;
-            font-weight: bold;
-            color: #667eea;
-            margin-top: 10px;
-        }
-        
-        .back-btn {
-            background: #e0e0e0;
-            color: #333;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .back-btn:hover {
-            background: #d0d0d0;
-        }
-        
-        .selected-solution {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .selected-solution h3 {
-            color: #667eea;
-            margin-bottom: 5px;
-            font-size: 18px;
-        }
-        
-        .savings-badge {
-            background: #28a745;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-    </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.5">
+  <style type="text/css">
+    body {background-color: #f2f5f9}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 18.0px 'Helvetica Neue'; color: #ffffff; -webkit-text-stroke: #ffffff}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 17.0px 'Helvetica Neue'; color: #434343; -webkit-text-stroke: #434343; background-color: #f6f7f9}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 20.0px '.SF NS'; color: #262626; -webkit-text-stroke: #262626}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #262626; -webkit-text-stroke: #262626}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #434343; -webkit-text-stroke: #434343; background-color: #f6f7f9}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px '.SF NS'; color: #262626; -webkit-text-stroke: #262626}
+    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px '.SF NS'; color: #ffffff; -webkit-text-stroke: #ffffff; background-color: #259a35}
+    p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; -webkit-text-stroke: #000000}
+    p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #434343; -webkit-text-stroke: #434343}
+    p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px '.SF NS'; color: #ffffff; -webkit-text-stroke: #ffffff}
+    span.s1 {font-kerning: none}
+    span.s2 {font-kerning: none; background-color: #ffffff}
+    span.s3 {font: 20.0px '.Apple Color Emoji UI'; font-kerning: none; color: #ffffff; background-color: #f6f7f9; -webkit-text-stroke: 0px #ffffff}
+    span.s4 {font-kerning: none; background-color: #f6f7f9}
+    span.s5 {font-kerning: none; background-color: #d9d9d9}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>AI és Automatizációs Megoldások</h1>
-            <p>Számítsa ki, mennyit takaríthat meg vállalkozásának!</p>
-        </div>
-        
-        <div class="content">
-            <!-- Első képernyő: Megoldás választás -->
-            <div class="screen active" id="screen1">
-                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-bottom: 40px; line-height: 1.8; color: #555; font-size: 17px;">
-                    A mesterséges intelligencia ma már nem luxus, hanem versenyelőny. A valódi AI-forradalom ott zajlik, ahol napi 2 óra felesleges munka tűnik el – nem tanácstermekben, hanem munkaállomásoknál. Most először a kisebb vállalatok is elérhetik azt a hatékonyságot, amit korábban csak a nagyok tudtak megfizetni. Válassza ki, melyik területen szeretne elsőként időt és pénzt megtakarítani – mi pedig megmutatjuk, hogyan.
-                </div>
-                
-                <h2 style="margin-bottom: 30px; color: #333;">Válasszon megoldást az alábbiak közül:</h2>
-                
-                <!-- Chatbotok -->
-                <div class="category">
-                    <div class="category-title" onclick="toggleCategory(this)">
-                        <div class="category-icon">💬</div>
-                        Ügyfélkapcsolatok
-                        <div class="category-expand-icon">▼</div>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-description">
-                            <strong>Használj chatbotokat arra, hogy külső kommunikációt folytass az ügyfeleiddel, válaszolj gyakori kérdésekre tudásbázis alapján, vagy belsőleg segítsd az új csapattagok betanulását.</strong>
-                            A chatbotok 24/7-es kapacitást adnak neked anélkül, hogy bővítened kellene a csapatot. Segítenek automatizálni az ismétlődő kommunikációt és szabadidőt biztosítanak a csapatodnak az értékteremtő munkára.
-                        </div>
-                        
-                        <div class="solution-card" data-solution="whatsapp-real-estate">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">WhatsApp chatbot ingatlan lead minősítéshez</div>
-                                <span class="savings-badge">50% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Dubai-i ingatlanügynök számára fejlesztett WhatsApp chatbot, amely automatikusan kezeli az ügyfelek megkereséseit. A megoldás 50%-kal csökkentette a lead szűrésre fordított időt, 24/7 azonnali válaszokat biztosít, és strukturáltan minősíti a potenciális vásárlókat. A rendszer projektbrosúrákat használ tudásbázisként, és AI-alapú vektoros kereséssel személyre szabott válaszokat ad.</p>
-                                <button class="calculate-btn" onclick="selectSolution('whatsapp-real-estate')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="whatsapp-education">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">WhatsApp alapú oktatási chatbot</div>
-                                <span class="savings-badge">60% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Szülőnevelési coach számára készült WhatsApp chatbot, amely a Tudatos Szülőség módszer alapján nyújt folyamatos útmutatást. A bot 24/7 elérhető támogatást biztosít, pontos válaszokat ad az oktatási anyagból, és skálázható kiterjesztése a coaching szolgáltatásnak. Így több szülőt érhet el anélkül, hogy növelné az egyéni konzultációk számát.</p>
-                                <button class="calculate-btn" onclick="selectSolution('whatsapp-education')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Adatok és Analitika -->
-                <div class="category">
-                    <div class="category-title" onclick="toggleCategory(this)">
-                        <div class="category-icon">📊</div>
-                        Adat és Elemzés
-                        <div class="category-expand-icon">▼</div>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-description">
-                            <strong>Automatizáld az unalmas részt – koncentrálj az értékteremtésre.</strong>
-                            Excel változáskövetés, churn dashboardok, vizualizált ügyfélkockázatok – mindez automatizálva, egy kattintással. Gyorsabb döntések, kevesebb hibázási lehetőség.
-                        </div>
-                        
-                        <div class="solution-card" data-solution="excel-tracker">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Excel változáskövető makró</div>
-                                <span class="savings-badge">80% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Karácsonyi vásár üzemeltetők számára fejlesztett Excel makró, amely automatizálja a heti fájlok összehasonlítását. A megoldás azonnal észleli az új bejegyzéseket és árváltozásokat, strukturált jelentést készít, és egyetlen kattintással működik. Hetente órákat takarít meg és javítja az árazási adatok pontosságát.</p>
-                                <button class="calculate-btn" onclick="selectSolution('excel-tracker')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="customer-health">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Ügyfél egészség ellenőrzés</div>
-                                <span class="savings-badge">30% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Lemorzsolódás előrejelzési adatokat vizualizáló interaktív műszerfal ChatGPT-ben. Segít korán észlelni a veszélyes trendeket, prioritizálni a magas kockázatú ügyfeleket, és adatvezérelt döntéseket hozni. Egyetlen kulcsfontosságú ügyfél megtartása 10-50 ezer dolláros megtakarítást jelenthet.</p>
-                                <button class="calculate-btn" onclick="selectSolution('customer-health')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="churn-prevention">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Lemorzsolódás megelőzés</div>
-                                <span class="savings-badge">40% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">n8n-ben futó lemorzsolódás előrejelző modell, amely automatikusan előrejelzi minden új ügyfél lemorzsolódási kockázatát, személyre szabott visszanyerő ajánlatokat küld ChatGPT segítségével, és naplózza az összes műveletet. A megfelelő ajánlat időben történő elküldése 200-2000 dolláros lemorzsolódást előzhet meg ügyfeleként.</p>
-                                <button class="calculate-btn" onclick="selectSolution('churn-prevention')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="churn-prediction">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Lemorzsolódás előrejelzés</div>
-                                <span class="savings-badge">35% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Alapszintű lemorzsolódás előrejelző modell, amely azonosítja a távozás kockázatával küzdő ügyfeleket. Lehetővé teszi időben történő visszanyerő ajánlatok küldését, támogatás fókuszálását magas kockázatú szegmensekre. Az új ügyfelek megszerzése 5-25x drágább lehet a megtartásnál, így már néhány százalékos javulás is 10-50 ezer dollár éves megtérülést hozhat.</p>
-                                <button class="calculate-btn" onclick="selectSolution('churn-prediction')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Pénzügy -->
-                <div class="category">
-                    <div class="category-title" onclick="toggleCategory(this)">
-                        <div class="category-icon">💰</div>
-                        Pénzügy
-                        <div class="category-expand-icon">▼</div>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-description">
-                            <strong>Szabadítsd fel a pénzügyi csapatodat az ismétlődő adatrögzítés alól – hogy stratégiával, előrejelzéssel és elemzéssel foglalkozhassanak.</strong>
-                            Számlaadatok kinyerése, bankkártya-tranzakciók egyeztetése és beszállítói adatok ellenőrzése – ezek mind automatizálhatók. A manuális munka helyett a csapat a költségoptimalizálásra és a pénzügyi tervezésre koncentrálhat.
-                        </div>
-                        
-                        <div class="solution-card" data-solution="invoice-extraction">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">AI-alapú számlafeldolgozó rendszer</div>
-                                <span class="savings-badge">90% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Continental pénzügyi csapata számára kifejlesztett AI-alapú számlafeldolgozó, amely automatikusan olvassa a PDF számlákat OCR és AI elemzéssel. Kivonatolja a kulcsmezőket, strukturált formátumban tárolja az adatokat, és valós idejű pénzügyi műszerfalakhoz biztosít adatot. Teljesen megszünteti a manuális számlafeldolgozást és hetente órákat takarít meg.</p>
-                                <button class="calculate-btn" onclick="selectSolution('invoice-extraction')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="credit-card-accounting">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Bankkártya bevétel könyvelés automatizálása</div>
-                                <span class="savings-badge">75% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">SIX Payment Services használók számára tervezett részben automatizált rendszer, amely kivonatolja és strukturálja az adatokat a PDF elszámolási jelentésekből. Automatikusan osztja fel a díjakat, illeszti a számla összegeket, és Serpa-kompatibilis importfájlokat generál. Havonta 5-10+ órát takarít meg telephelyenként.</p>
-                                <button class="calculate-btn" onclick="selectSolution('credit-card-accounting')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="vendor-management">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Beszállítói adatkezelés</div>
-                                <span class="savings-badge">85% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">AI Web Scout ChatGPT keresési API-val és n8n-nel, amely felkeresi a beszállítók weboldalait, kivonatolja a kapcsolattartási információkat, összehasonlítja a meglévő adatokkal, és jelzi a változásokat Google Sheets-ben. Egy ügyfél ezt használta egy teljes munkaidős alkalmazott helyettesítésére, aki hetente ellenőrizte a beszállítói adatokat - évi 60 ezer dollár megtakarítás.</p>
-                                <button class="calculate-btn" onclick="selectSolution('vendor-management')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- HR -->
-                <div class="category">
-                    <div class="category-title" onclick="toggleCategory(this)">
-                        <div class="category-icon">👥</div>
-                        HR
-                        <div class="category-expand-icon">▼</div>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-description">
-                            <strong>Szűrd ki a zajt – engedd, hogy a HR végre az emberekkel foglalkozzon.</strong>
-                            Az automatizált onboarding chatbotok, önéletrajz-kezelő rendszerek és szerződésgenerálás segítenek abban, hogy a HR a csapatépítésre, nem pedig az adminisztrációra összpontosíthasson. Gyorsabb felvétel, kevesebb hiba, jobb munkavállalói élmény.
-                        </div>
-                        
-                        <div class="solution-card" data-solution="onboarding-chatbot">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Beléptetési és belső támogatási chatbot</div>
-                                <span class="savings-badge">90% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">AI-alapú HR chatbot, amely azonnali válaszokat ad a belső dokumentumokból. HR és vezetők heti 10 órát töltenek ismétlődő kérdések megválaszolásával - ez csökkenthető heti 1 órára. Havi 35 óra megtakarítás, ami óránként 50 dollárral számolva évi 21 ezer dollár. Egy ügyfél havi 30 ezer dollárt takarított meg a support ticketek csökkentésével.</p>
-                                <button class="calculate-btn" onclick="selectSolution('onboarding-chatbot')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="cv-intake">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Automatizált önéletrajz fogadó rendszer</div>
-                                <span class="savings-badge">70% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Koliken HR csapata számára készült automatizált workflow, amely észleli az új jelentkezéseket emailen keresztül, kivonatolja a feladó adatait, és minden kulcsadatot Airtable-ben tárol. Megszünteti a manuális adatbevitelt, központi adatbázisban követi az összes jelentkezőt, és felgyorsítja a jelöltek szűrését és felvételi döntéseket.</p>
-                                <button class="calculate-btn" onclick="selectSolution('cv-intake')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="contract-generator">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Automatizált szerződés generátor</div>
-                                <span class="savings-badge">93% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Évi 300+ szerződést generáló rendszer angol és magyar nyelven. A felhasználók egyszerűen kitöltenek egy űrlapot, a rendszer pedig másodpercek alatt előállít egy kész PDF dokumentumot. A szerződés előkészítési idő 30 percről 2 percre csökkent, évi 250-300 óra megtakarítást eredményezve.</p>
-                                <button class="calculate-btn" onclick="selectSolution('contract-generator')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Piaci intelligencia -->
-                <div class="category">
-                    <div class="category-title" onclick="toggleCategory(this)">
-                        <div class="category-icon">🔍</div>
-                        Piaci intelligencia
-                        <div class="category-expand-icon">▼</div>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-description">
-                            <strong>Ne csak reagálj – láss előre.</strong>
-                            AI-alapú kutatórobotok és webes adatgyűjtők gondoskodnak arról, hogy mindig naprakész információd legyen a versenytársakról és a piacodról. Kevesebb manuális másolás, több idő a stratégiára.
-                        </div>
-                        
-                        <div class="solution-card" data-solution="research-autopilot">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Kutatási autopilóta</div>
-                                <span class="savings-badge">60% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">AI workflow, amely ChatGPT-t ütemezett kutatási asszisztenssé alakítja. Automatikusan megtalálja és összefoglalja a magas értékű információkat az Ön szakterületéről - naponta, anélkül hogy bármit tennie kellene. Egyetlen időben észlelt insight egy 10 ezer dolláros lehetőséget jelenthet új ügyfél, tartalom vagy stratégiai döntés formájában.</p>
-                                <button class="calculate-btn" onclick="selectSolution('research-autopilot')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="web-scraping">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Webes adatgyűjtés automatizálása</div>
-                                <span class="savings-badge">80% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Teljesen egyedi web scraping workflow-k, amelyek automatikusan kivonatolnak és strukturálnak adatokat bármely megadott nyilvános weboldalról. Órák heti manuális munkáját váltja ki automatizált szkriptekkel, valós idejű versenytárs vagy partner monitoringot tesz lehetővé, és közvetlenül Airtable-be, Google Sheets-be vagy műszerfalakba tölti az adatokat.</p>
-                                <button class="calculate-btn" onclick="selectSolution('web-scraping')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="crm-implementation">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">CRM implementáció és értékesítési teljesítmény követés</div>
-                                <span class="savings-badge">50% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Koliken számára nulláról tervezett és implementált teljes CRM rendszer. Központosított lead és kapcsolat kezelést biztosít, automatizálja a feladat emlékeztetőket, mérhetővé teszi az egyéni teljesítményt, és korán azonosítja az értékesítési folyamat szűk keresztmetszeteit. Az értékesítést informális folyamatból mérhető, megismételhető műveletté alakította.</p>
-                                <button class="calculate-btn" onclick="selectSolution('crm-implementation')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Marketing megoldások -->
-                <div class="category">
-                    <div class="category-title" onclick="toggleCategory(this)">
-                        <div class="category-icon">📣</div>
-                        Marketing
-                        <div class="category-expand-icon">▼</div>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-description">
-                            <strong>Változtasd a tartalmat növekedési motorjává, ne értékőrlő műhellyé.</strong>
-                            Automatizáld a lead magneteket, a szegmentálást és a tartalom újrafeldolgozását. Építs skálázható leadgeneráló és tartalomgyártó rendszereket, amik minimális időbefektetéssel hoznak eredményeket.
-                        </div>
-                        
-                        <div class="solution-card" data-solution="lead-magnet">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Lead mágnes autopilóta</div>
-                                <span class="savings-badge">70% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">AI-alapú rendszer, amely szakértői keretrendszerekből dinamikus lead mágneseket generál igény szerint, minden felhasználóhoz igazítva. A személyre szabott lead mágnesek 3x-osára növelhetik a kattintási vagy konverziós arányt, több minősített lead-et generálva ugyanannyi forgalomból. Nulla határköltséggel skálázható megoldás.</p>
-                                <button class="calculate-btn" onclick="selectSolution('lead-magnet')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="lead-segmentation">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">AI lead szegmentáció</div>
-                                <span class="savings-badge">80% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Automatikusan azonosítja a forró leadeket, figyelmen kívül hagyja a hidegeket, és elmenti a többit későbbre. 20-30%-kal növeli a konverziót a megfelelő leadekre fókuszálva, 80%-kal csökkenti a követési időt. 500 lead feldolgozása esetén 3315 dollár megtakarítás és 10 további lezárás esetén 50 ezer dollár új bevétel.</p>
-                                <button class="calculate-btn" onclick="selectSolution('lead-segmentation')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="lead-enrichment">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Lead gazdagítás autopilóta</div>
-                                <span class="savings-badge">65% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Nyers leadeket automatikusan gazdagít címekkel, LinkedIn profilokkal, cégadatokkal, vásárlói szerepekkel és ügyletméret becslésekkel. Prioritizálja a magas értékű fiókokat, személyre szabott kapcsolatfelvételt tesz lehetővé, és elkerüli az alacsony illeszkedésű potenciális ügyfeleket. Évente 1-2 extra ügylet 10 ezer dollár feletti értéket jelenthet.</p>
-                                <button class="calculate-btn" onclick="selectSolution('lead-enrichment')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="content-repurposing">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Tartalom újrahasznosító autopilóta</div>
-                                <span class="savings-badge">85% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Egy hosszú formátumú tartalomból 9+ magas értékű tartalmat készít, amelyet LinkedIn-en, emailben vagy máshol posztolhat. Időt takarít meg és összetett figyelmet generál, segít következetesen megjelenni thought leadership tartalommal. Egyetlen jó poszt egy 10 ezer dollár értékű ügyfelet vagy lehetőséget hozhat.</p>
-                                <button class="calculate-btn" onclick="selectSolution('content-repurposing')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="social-scraper">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Instagram és TikTok tartalom gyűjtő</div>
-                                <span class="savings-badge">75% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">hop.rocks marketing elemzői számára készült automatizált rendszer, amely az Instagram és TikTok profilok legutóbbi posztjait gyűjti. Automatikusan letölti és archiválja a legfrissebb posztokat, like-okat, kommenteket és megtekintési számokat gyűjt. Hetente órákat takarít meg és gyorsabb, adatalapú marketing döntéseket tesz lehetővé.</p>
-                                <button class="calculate-btn" onclick="selectSolution('social-scraper')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Értékesítési megoldások -->
-                <div class="category">
-                    <div class="category-title" onclick="toggleCategory(this)">
-                        <div class="category-icon">🎯</div>
-                        Értékesítés
-                        <div class="category-expand-icon">▼</div>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-description">
-                            <strong>Néha a probléma a leadgenerálás. Máskor az, hogy a meglévő leadekből kit érdemes egyáltalán felhívni.</strong>
-                            Ezek az AI-alapú munkafolyamatok minden értékesítési lépést támogatnak – kevesebb admin, több lezárt ügylet.
-                        </div>
-                        
-                        <div class="solution-card" data-solution="icebreaker">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Személyre szabott hideg email nyitó sorok</div>
-                                <span class="savings-badge">95% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Egyedi AI asszisztens, amely 1-2 mondatos hideg nyitó sorokat ír a cég ajánlatához igazítva, gazdagított lead adatok felhasználásával. Lead-enként 5-10 percről 15 másodpercre csökkenti a kutatási időt, a személyes bevezetők átlagosan 2-3x-osára növelik a válaszarányt. Egyetlen extra ügylet a jobb kapcsolatfelvételből 10 ezer dollár feletti értéket hozhat.</p>
-                                <button class="calculate-btn" onclick="selectSolution('icebreaker')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="offer-generator">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Ajánlat generátor</div>
-                                <span class="savings-badge">40% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Ügyfél visszajelzésekből épít konvertáló ajánlatokat. Egy visszajelzés-vezérelt ajánlat növelheti az értékesítést vagy segít néhány kulcsfontosságú ügylet gyorsabb lezárásában. Eseményeknél, SaaS-nál vagy B2B-nél: +20 jegy x 500 dollár = 10 ezer dollár, vagy 3 ügyfél 3500 dollárral = 10,5 ezer dollár, vagy havi 30-50 óra megtakarítás a manuális elemzésen.</p>
-                                <button class="calculate-btn" onclick="selectSolution('offer-generator')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                        
-                        <div class="solution-card" data-solution="presales-agent">
-                            <div class="solution-header" onclick="toggleCard(this)">
-                                <div class="solution-title">Értékesítés előtti AI ügynök</div>
-                                <span class="savings-badge">55% megtakarítás</span>
-                                <div class="expand-icon">▼</div>
-                            </div>
-                            <div class="solution-content">
-                                <p class="solution-description">Automatizálja az értékesítés előtti ciklust AI használatával - érdeklődések kezelése, leadek minősítése, árajánlatok készítése. Évente csak 2-3 további lead konvertálása gyorsabb válaszadással és ajánlatadással, átlagosan 4-6 ezer dolláros ügyletértékkel, könnyen eléri a 10-15 ezer dollár éves bevételt. Plusz az adminisztrációra fordított idő megtakarítása növeli az értékesítési beszélgetésekre fordítható órák számát.</p>
-                                <button class="calculate-btn" onclick="selectSolution('presales-agent')">Megtakarítás kiszámítása →</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Második képernyő: Kalkulátor -->
-            <div class="screen" id="screen2">
-                <button class="back-btn" onclick="goBack()">← Vissza a megoldásokhoz</button>
-                
-                <div class="selected-solution" id="selectedSolutionInfo">
-                    <h3 id="selectedSolutionTitle"></h3>
-                </div>
-                
-                <div class="calculator-section">
-                    <h3><span class="calculator-icon">1</span> Alapadatok megadása</h3>
-                    
-                    <div class="form-group">
-                        <label for="peopleCount">Hány munkatárs végzi jelenleg ezt a feladatot?</label>
-                        <input type="number" id="peopleCount" min="1" value="1" onchange="calculateSavings()">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="hoursPerWeek">Átlagosan hány órát töltenek ezzel a feladattal hetente?</label>
-                        <input type="number" id="hoursPerWeek" min="1" value="10" onchange="calculateSavings()">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="hourlyRate">Óradíj (Ft/óra)</label>
-                        <input type="number" id="hourlyRate" min="1000" placeholder="Írja be a kolléga óradíját" onchange="calculateSavings()">
-                    </div>
-                </div>
-                
-                <div class="hourly-calculator">
-                    <h3><span class="calculator-icon">?</span> Óradíj kalkulátor</h3>
-                    <p>Ha nem tudja az óradíjat, adja meg a teljes havi bérköltséget:</p>
-                    <div class="form-group">
-                        <label for="monthlySalary">Teljes havi bérköltség (bruttó bér + járulékok)</label>
-                        <input type="number" id="monthlySalary" placeholder="pl. 800000" onchange="calculateHourlyRate()">
-                    </div>
-                    <div class="hourly-result" id="calculatedHourlyRate"></div>
-                </div>
-                
-                <div class="result-box" id="resultBox" style="display: none;">
-                    <h2 id="yearlySavings">0 Ft</h2>
-                    <p>Éves megtakarítás</p>
-                    <p id="monthlySavings" style="font-size: 16px; margin-top: 10px;"></p>
-                </div>
-                
-                <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin-top: 30px; text-align: center;">
-                    <p style="font-weight: 600; font-size: 18px; color: #333; margin-bottom: 20px;">
-                        Foglaljon időpontot egy 30 perces konzultációra – nézzük meg, hogyan tudunk segíteni vállalkozásának!
-                    </p>
-                    <a href="https://calendly.com/gabor-ai/talk-to-gabor" target="_blank" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block; transition: all 0.3s ease;">
-                        Időpontfoglalás
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        const solutions = {
-            'whatsapp-real-estate': {
-                title: 'WhatsApp chatbot ingatlan lead minősítéshez',
-                savingsPercent: 50
-            },
-            'whatsapp-education': {
-                title: 'WhatsApp alapú oktatási chatbot',
-                savingsPercent: 60
-            },
-            'excel-tracker': {
-                title: 'Excel változáskövető makró',
-                savingsPercent: 80
-            },
-            'customer-health': {
-                title: 'Ügyfél egészség ellenőrzés',
-                savingsPercent: 30
-            },
-            'churn-prevention': {
-                title: 'Lemorzsolódás megelőzés',
-                savingsPercent: 40
-            },
-            'churn-prediction': {
-                title: 'Lemorzsolódás előrejelzés',
-                savingsPercent: 35
-            },
-            'invoice-extraction': {
-                title: 'AI-alapú számlafeldolgozó rendszer',
-                savingsPercent: 90
-            },
-            'credit-card-accounting': {
-                title: 'Bankkártya bevétel könyvelés automatizálása',
-                savingsPercent: 75
-            },
-            'vendor-management': {
-                title: 'Beszállítói adatkezelés',
-                savingsPercent: 85
-            },
-            'onboarding-chatbot': {
-                title: 'Beléptetési és belső támogatási chatbot',
-                savingsPercent: 90
-            },
-            'cv-intake': {
-                title: 'Automatizált önéletrajz fogadó rendszer',
-                savingsPercent: 70
-            },
-            'contract-generator': {
-                title: 'Automatizált szerződés generátor',
-                savingsPercent: 93
-            },
-            'research-autopilot': {
-                title: 'Kutatási autopilóta',
-                savingsPercent: 60
-            },
-            'web-scraping': {
-                title: 'Webes adatgyűjtés automatizálása',
-                savingsPercent: 80
-            },
-            'crm-implementation': {
-                title: 'CRM implementáció és értékesítési teljesítmény követés',
-                savingsPercent: 50
-            },
-            'lead-magnet': {
-                title: 'Lead mágnes autopilóta',
-                savingsPercent: 70
-            },
-            'lead-segmentation': {
-                title: 'AI lead szegmentáció',
-                savingsPercent: 80
-            },
-            'lead-enrichment': {
-                title: 'Lead gazdagítás autopilóta',
-                savingsPercent: 65
-            },
-            'content-repurposing': {
-                title: 'Tartalom újrahasznosító autopilóta',
-                savingsPercent: 85
-            },
-            'social-scraper': {
-                title: 'Instagram és TikTok tartalom gyűjtő',
-                savingsPercent: 75
-            },
-            'icebreaker': {
-                title: 'Személyre szabott hideg email nyitó sorok',
-                savingsPercent: 95
-            },
-            'offer-generator': {
-                title: 'Ajánlat generátor',
-                savingsPercent: 40
-            },
-            'presales-agent': {
-                title: 'Értékesítés előtti AI ügynök',
-                savingsPercent: 55
-            }
-        };
-        
-        let currentSolution = null;
-        
-        function toggleCategory(header) {
-            const category = header.closest('.category');
-            const isExpanded = category.classList.contains('expanded');
-            
-            // Toggle current category
-            category.classList.toggle('expanded');
-        }
-        
-        function toggleCard(header) {
-            const card = header.closest('.solution-card');
-            const isExpanded = card.classList.contains('expanded');
-            
-            // Close all other cards in the same category
-            const category = card.closest('.category');
-            category.querySelectorAll('.solution-card').forEach(c => {
-                if (c !== card) {
-                    c.classList.remove('expanded');
-                }
-            });
-            
-            // Toggle current card
-            card.classList.toggle('expanded');
-        }
-        
-        function selectSolution(solutionId) {
-            currentSolution = solutionId;
-            const solution = solutions[solutionId];
-            
-            document.getElementById('selectedSolutionTitle').textContent = solution.title;
-            
-            document.getElementById('screen1').classList.remove('active');
-            document.getElementById('screen2').classList.add('active');
-            calculateSavings();
-        }
-        
-        function goBack() {
-            document.getElementById('screen2').classList.remove('active');
-            document.getElementById('screen1').classList.add('active');
-        }
-        
-        function calculateHourlyRate() {
-            const monthlySalary = parseFloat(document.getElementById('monthlySalary').value) || 0;
-            if (monthlySalary > 0) {
-                const hourlyRate = Math.round(monthlySalary / 160);
-                document.getElementById('calculatedHourlyRate').textContent = `Számított óradíj: ${hourlyRate.toLocaleString('hu-HU')} Ft/óra`;
-                document.getElementById('hourlyRate').value = hourlyRate;
-                calculateSavings();
-            }
-        }
-        
-        function calculateSavings() {
-            if (!currentSolution) return;
-            
-            const peopleCount = parseInt(document.getElementById('peopleCount').value) || 0;
-            const hoursPerWeek = parseInt(document.getElementById('hoursPerWeek').value) || 0;
-            const hourlyRate = parseInt(document.getElementById('hourlyRate').value) || 0;
-            
-            const savingsPercent = solutions[currentSolution]?.savingsPercent || 50;
-            
-            const weeklyHours = peopleCount * hoursPerWeek;
-            const weeklyCost = weeklyHours * hourlyRate;
-            const yearlyCost = weeklyCost * 52;
-            
-            const yearlySavings = Math.round(yearlyCost * (savingsPercent / 100));
-            const monthlySavings = Math.round(yearlySavings / 12);
-            
-            if (yearlySavings > 0) {
-                document.getElementById('resultBox').style.display = 'block';
-                document.getElementById('yearlySavings').textContent = yearlySavings.toLocaleString('hu-HU') + ' Ft';
-                document.getElementById('monthlySavings').textContent = `Havi megtakarítás: ${monthlySavings.toLocaleString('hu-HU')} Ft`;
-            }
-        }
-    </script>
+<h1 style="margin: 0.0px 0.0px 10.0px 0.0px; text-align: center; font: 32.0px 'Helvetica Neue'; color: #ffffff; -webkit-text-stroke: #ffffff"><span class="s1"><b>AI és Automatizációs Megoldások</b></span></h1>
+<p class="p2"><span class="s1">Számítsa ki, mennyit takaríthat meg vállalkozásának!</span></p>
+<p class="p3"><span class="s1">A mesterséges intelligencia ma már nem luxus, hanem versenyelőny. A valódi AI-forradalom ott zajlik, ahol napi 2 óra felesleges munka tűnik el – nem tanácstermekben, hanem munkaállomásoknál. Most először a kisebb vállalatok is elérhetik azt a hatékonyságot, amit korábban csak a nagyok tudtak megfizetni. Válassza ki, melyik területen szeretne elsőként időt és pénzt megtakarítani – mi pedig megmutatjuk, hogyan.</span></p>
+<h2 style="margin: 0.0px 0.0px 30.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #262626; -webkit-text-stroke: #262626"><span class="s2"><b>Válasszon megoldást az alábbiak közül:</b><b></b></span></h2>
+<p class="p5"><span class="s3">💬</span><span class="s4"><b> Ügyfélkapcsolatok ▼</b><b></b></span></p>
+<p class="p6"><span class="s4"><b>Használj chatbotokat arra, hogy külső kommunikációt folytass az ügyfeleiddel, válaszolj gyakori kérdésekre tudásbázis alapján, vagy belsőleg segítsd az új csapattagok betanulását.</b><b></b></span></p>
+<p class="p7"><span class="s1">A chatbotok 24/7-es kapacitást adnak neked anélkül, hogy bővítened kellene a csapatot. Segítenek automatizálni az ismétlődő kommunikációt és szabadidőt biztosítanak a csapatodnak az értékteremtő munkára.</span></p>
+<p class="p8"><span class="s2"><b>WhatsApp chatbot ingatlan lead minősítéshez</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>50% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Dubai-i ingatlanügynök számára fejlesztett WhatsApp chatbot, amely automatikusan kezeli az ügyfelek megkereséseit. A megoldás 50%-kal csökkentette a lead szűrésre fordított időt, 24/7 azonnali válaszokat biztosít, és strukturáltan minősíti a potenciális vásárlókat. A rendszer projektbrosúrákat használ tudásbázisként, és AI-alapú vektoros kereséssel személyre szabott válaszokat ad.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>WhatsApp alapú oktatási chatbot</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>60% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Szülőnevelési coach számára készült WhatsApp chatbot, amely a Tudatos Szülőség módszer alapján nyújt folyamatos útmutatást. A bot 24/7 elérhető támogatást biztosít, pontos válaszokat ad az oktatási anyagból, és skálázható kiterjesztése a coaching szolgáltatásnak. Így több szülőt érhet el anélkül, hogy növelné az egyéni konzultációk számát.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p5"><span class="s3">📊</span><span class="s4"><b> Adat és Elemzés ▼</b><b></b></span></p>
+<p class="p6"><span class="s4"><b>Automatizáld az unalmas részt – koncentrálj az értékteremtésre.</b><b></b></span></p>
+<p class="p7"><span class="s1">Excel változáskövetés, churn dashboardok, vizualizált ügyfélkockázatok – mindez automatizálva, egy kattintással. Gyorsabb döntések, kevesebb hibázási lehetőség.</span></p>
+<p class="p8"><span class="s2"><b>Excel változáskövető makró</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>80% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Karácsonyi vásár üzemeltetők számára fejlesztett Excel makró, amely automatizálja a heti fájlok összehasonlítását. A megoldás azonnal észleli az új bejegyzéseket és árváltozásokat, strukturált jelentést készít, és egyetlen kattintással működik. Hetente órákat takarít meg és javítja az árazási adatok pontosságát.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Ügyfél egészség ellenőrzés</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>30% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Lemorzsolódás előrejelzési adatokat vizualizáló interaktív műszerfal ChatGPT-ben. Segít korán észlelni a veszélyes trendeket, prioritizálni a magas kockázatú ügyfeleket, és adatvezérelt döntéseket hozni. Egyetlen kulcsfontosságú ügyfél megtartása 10-50 ezer dolláros megtakarítást jelenthet.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Lemorzsolódás megelőzés</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>40% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">n8n-ben futó lemorzsolódás előrejelző modell, amely automatikusan előrejelzi minden új ügyfél lemorzsolódási kockázatát, személyre szabott visszanyerő ajánlatokat küld ChatGPT segítségével, és naplózza az összes műveletet. A megfelelő ajánlat időben történő elküldése 200-2000 dolláros lemorzsolódást előzhet meg ügyfeleként.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Lemorzsolódás előrejelzés</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>35% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Alapszintű lemorzsolódás előrejelző modell, amely azonosítja a távozás kockázatával küzdő ügyfeleket. Lehetővé teszi időben történő visszanyerő ajánlatok küldését, támogatás fókuszálását magas kockázatú szegmensekre. Az új ügyfelek megszerzése 5-25x drágább lehet a megtartásnál, így már néhány százalékos javulás is 10-50 ezer dollár éves megtérülést hozhat.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p5"><span class="s3">💰</span><span class="s4"><b> Pénzügy ▼</b><b></b></span></p>
+<p class="p6"><span class="s4"><b>Szabadítsd fel a pénzügyi csapatodat az ismétlődő adatrögzítés alól – hogy stratégiával, előrejelzéssel és elemzéssel foglalkozhassanak.</b><b></b></span></p>
+<p class="p7"><span class="s1">Számlaadatok kinyerése, bankkártya-tranzakciók egyeztetése és beszállítói adatok ellenőrzése – ezek mind automatizálhatók. A manuális munka helyett a csapat a költségoptimalizálásra és a pénzügyi tervezésre koncentrálhat.</span></p>
+<p class="p8"><span class="s2"><b>AI-alapú számlafeldolgozó rendszer</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>90% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Continental pénzügyi csapata számára kifejlesztett AI-alapú számlafeldolgozó, amely automatikusan olvassa a PDF számlákat OCR és AI elemzéssel. Kivonatolja a kulcsmezőket, strukturált formátumban tárolja az adatokat, és valós idejű pénzügyi műszerfalakhoz biztosít adatot. Teljesen megszünteti a manuális számlafeldolgozást és hetente órákat takarít meg.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Bankkártya bevétel könyvelés automatizálása</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>75% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">SIX Payment Services használók számára tervezett részben automatizált rendszer, amely kivonatolja és strukturálja az adatokat a PDF elszámolási jelentésekből. Automatikusan osztja fel a díjakat, illeszti a számla összegeket, és Serpa-kompatibilis importfájlokat generál. Havonta 5-10+ órát takarít meg telephelyenként.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Beszállítói adatkezelés</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>85% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">AI Web Scout ChatGPT keresési API-val és n8n-nel, amely felkeresi a beszállítók weboldalait, kivonatolja a kapcsolattartási információkat, összehasonlítja a meglévő adatokkal, és jelzi a változásokat Google Sheets-ben. Egy ügyfél ezt használta egy teljes munkaidős alkalmazott helyettesítésére, aki hetente ellenőrizte a beszállítói adatokat - évi 60 ezer dollár megtakarítás.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p5"><span class="s3">👥</span><span class="s4"><b> HR ▼</b><b></b></span></p>
+<p class="p6"><span class="s4"><b>Szűrd ki a zajt – engedd, hogy a HR végre az emberekkel foglalkozzon.</b><b></b></span></p>
+<p class="p7"><span class="s1">Az automatizált onboarding chatbotok, önéletrajz-kezelő rendszerek és szerződésgenerálás segítenek abban, hogy a HR a csapatépítésre, nem pedig az adminisztrációra összpontosíthasson. Gyorsabb felvétel, kevesebb hiba, jobb munkavállalói élmény.</span></p>
+<p class="p8"><span class="s2"><b>Beléptetési és belső támogatási chatbot</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>90% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">AI-alapú HR chatbot, amely azonnali válaszokat ad a belső dokumentumokból. HR és vezetők heti 10 órát töltenek ismétlődő kérdések megválaszolásával - ez csökkenthető heti 1 órára. Havi 35 óra megtakarítás, ami óránként 50 dollárral számolva évi 21 ezer dollár. Egy ügyfél havi 30 ezer dollárt takarított meg a support ticketek csökkentésével.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Automatizált önéletrajz fogadó rendszer</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>70% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Koliken HR csapata számára készült automatizált workflow, amely észleli az új jelentkezéseket emailen keresztül, kivonatolja a feladó adatait, és minden kulcsadatot Airtable-ben tárol. Megszünteti a manuális adatbevitelt, központi adatbázisban követi az összes jelentkezőt, és felgyorsítja a jelöltek szűrését és felvételi döntéseket.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Automatizált szerződés generátor</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>93% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Évi 300+ szerződést generáló rendszer angol és magyar nyelven. A felhasználók egyszerűen kitöltenek egy űrlapot, a rendszer pedig másodpercek alatt előállít egy kész PDF dokumentumot. A szerződés előkészítési idő 30 percről 2 percre csökkent, évi 250-300 óra megtakarítást eredményezve.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p5"><span class="s3">🔍</span><span class="s4"><b> Vetélytársfigyelés ▼</b><b></b></span></p>
+<p class="p6"><span class="s4"><b>Ne csak reagálj – láss előre.</b><b></b></span></p>
+<p class="p7"><span class="s1">AI-alapú kutatórobotok és webes adatgyűjtők gondoskodnak arról, hogy mindig naprakész információd legyen a versenytársakról és a piacodról. Kevesebb manuális másolás, több idő a stratégiára.</span></p>
+<p class="p8"><span class="s2"><b>Kutatási autopilóta</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>60% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">AI workflow, amely ChatGPT-t ütemezett kutatási asszisztenssé alakítja. Automatikusan megtalálja és összefoglalja a magas értékű információkat az Ön szakterületéről - naponta, anélkül hogy bármit tennie kellene. Egyetlen időben észlelt insight egy 10 ezer dolláros lehetőséget jelenthet új ügyfél, tartalom vagy stratégiai döntés formájában.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Webes adatgyűjtés automatizálása</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>80% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Teljesen egyedi web scraping workflow-k, amelyek automatikusan kivonatolnak és strukturálnak adatokat bármely megadott nyilvános weboldalról. Órák heti manuális munkáját váltja ki automatizált szkriptekkel, valós idejű versenytárs vagy partner monitoringot tesz lehetővé, és közvetlenül Airtable-be, Google Sheets-be vagy műszerfalakba tölti az adatokat.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>CRM implementáció és értékesítési teljesítmény követés</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>50% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Koliken számára nulláról tervezett és implementált teljes CRM rendszer. Központosított lead és kapcsolat kezelést biztosít, automatizálja a feladat emlékeztetőket, mérhetővé teszi az egyéni teljesítményt, és korán azonosítja az értékesítési folyamat szűk keresztmetszeteit. Az értékesítést informális folyamatból mérhető, megismételhető műveletté alakította.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p5"><span class="s3">📣</span><span class="s4"><b> Marketing ▼</b><b></b></span></p>
+<p class="p6"><span class="s4"><b>Változtasd a tartalmat növekedési motorjává, ne értékőrlő műhellyé.</b><b></b></span></p>
+<p class="p7"><span class="s1">Automatizáld a lead magneteket, a szegmentálást és a tartalom újrafeldolgozását. Építs skálázható leadgeneráló és tartalomgyártó rendszereket, amik minimális időbefektetéssel hoznak eredményeket.</span></p>
+<p class="p8"><span class="s2"><b>Lead mágnes autopilóta</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>70% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">AI-alapú rendszer, amely szakértői keretrendszerekből dinamikus lead mágneseket generál igény szerint, minden felhasználóhoz igazítva. A személyre szabott lead mágnesek 3x-osára növelhetik a kattintási vagy konverziós arányt, több minősített lead-et generálva ugyanannyi forgalomból. Nulla határköltséggel skálázható megoldás.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>AI lead szegmentáció</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>80% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Automatikusan azonosítja a forró leadeket, figyelmen kívül hagyja a hidegeket, és elmenti a többit későbbre. 20-30%-kal növeli a konverziót a megfelelő leadekre fókuszálva, 80%-kal csökkenti a követési időt. 500 lead feldolgozása esetén 3315 dollár megtakarítás és 10 további lezárás esetén 50 ezer dollár új bevétel.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Lead gazdagítás autopilóta</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>65% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Nyers leadeket automatikusan gazdagít címekkel, LinkedIn profilokkal, cégadatokkal, vásárlói szerepekkel és ügyletméret becslésekkel. Prioritizálja a magas értékű fiókokat, személyre szabott kapcsolatfelvételt tesz lehetővé, és elkerüli az alacsony illeszkedésű potenciális ügyfeleket. Évente 1-2 extra ügylet 10 ezer dollár feletti értéket jelenthet.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Tartalom újrahasznosító autopilóta</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>85% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Egy hosszú formátumú tartalomból 9+ magas értékű tartalmat készít, amelyet LinkedIn-en, emailben vagy máshol posztolhat. Időt takarít meg és összetett figyelmet generál, segít következetesen megjelenni thought leadership tartalommal. Egyetlen jó poszt egy 10 ezer dollár értékű ügyfelet vagy lehetőséget hozhat.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Instagram és TikTok tartalom gyűjtő</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>75% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">hop.rocks marketing elemzői számára készült automatizált rendszer, amely az Instagram és TikTok profilok legutóbbi posztjait gyűjti. Automatikusan letölti és archiválja a legfrissebb posztokat, like-okat, kommenteket és megtekintési számokat gyűjt. Hetente órákat takarít meg és gyorsabb, adatalapú marketing döntéseket tesz lehetővé.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p5"><span class="s3">🎯</span><span class="s4"><b> Értékesítés ▼</b><b></b></span></p>
+<p class="p6"><span class="s4"><b>Néha a probléma a leadgenerálás. Máskor az, hogy a meglévő leadekből kit érdemes egyáltalán felhívni.</b><b></b></span></p>
+<p class="p7"><span class="s1">Ezek az AI-alapú munkafolyamatok minden értékesítési lépést támogatnak – kevesebb admin, több lezárt ügylet.</span></p>
+<p class="p8"><span class="s2"><b>Személyre szabott hideg email nyitó sorok</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>95% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Egyedi AI asszisztens, amely 1-2 mondatos hideg nyitó sorokat ír a cég ajánlatához igazítva, gazdagított lead adatok felhasználásával. Lead-enként 5-10 percről 15 másodpercre csökkenti a kutatási időt, a személyes bevezetők átlagosan 2-3x-osára növelik a válaszarányt. Egyetlen extra ügylet a jobb kapcsolatfelvételből 10 ezer dollár feletti értéket hozhat.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Ajánlat generátor</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>40% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Ügyfél visszajelzésekből épít konvertáló ajánlatokat. Egy visszajelzés-vezérelt ajánlat növelheti az értékesítést vagy segít néhány kulcsfontosságú ügylet gyorsabb lezárásában. Eseményeknél, SaaS-nál vagy B2B-nél: +20 jegy x 500 dollár = 10 ezer dollár, vagy 3 ügyfél 3500 dollárral = 10,5 ezer dollár, vagy havi 30-50 óra megtakarítás a manuális elemzésen.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
+<p class="p8"><span class="s2"><b>Értékesítés előtti AI ügynök</b><b></b></span></p>
+<p class="p9"><span class="s1"><b>55% megtakarítás</b></span></p>
+<p class="p10"><span class="s5">▼</span></p>
+<p class="p11"><span class="s2">Automatizálja az értékesítés előtti ciklust AI használatával - érdeklődések kezelése, leadek minősítése, árajánlatok készítése. Évente csak 2-3 további lead konvertálása gyorsabb válaszadással és ajánlatadással, átlagosan 4-6 ezer dolláros ügyletértékkel, könnyen eléri a 10-15 ezer dollár éves bevételt. Plusz az adminisztrációra fordított idő megtakarítása növeli az értékesítési beszélgetésekre fordítható órák számát.</span></p>
+<p class="p12"><span class="s2"><b>Megtakarítás kiszámítása →</b><b></b></span></p>
 </body>
 </html>
