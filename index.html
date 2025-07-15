@@ -380,13 +380,17 @@
         <div class="content">
             <!-- Első képernyő: Megoldás választás -->
             <div class="screen active" id="screen1">
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-bottom: 40px; line-height: 1.8; color: #555; font-size: 17px;">
+                    A mesterséges intelligencia ma már nem luxus, hanem versenyelőny. A valódi AI-forradalom ott zajlik, ahol napi 2 óra felesleges munka tűnik el – nem tanácstermekben, hanem munkaállomásoknál. Most először a kisebb vállalatok is elérhetik azt a hatékonyságot, amit korábban csak a nagyok tudtak megfizetni. Válassza ki, melyik területen szeretne elsőként időt és pénzt megtakarítani – mi pedig megmutatjuk, hogyan.
+                </div>
+                
                 <h2 style="margin-bottom: 30px; color: #333;">Válasszon megoldást az alábbiak közül:</h2>
                 
                 <!-- Chatbotok -->
                 <div class="category">
                     <div class="category-title" onclick="toggleCategory(this)">
                         <div class="category-icon">💬</div>
-                        Chatbotok
+                        Ügyfélkapcsolatok
                         <div class="category-expand-icon">▼</div>
                     </div>
                     <div class="category-content">
@@ -787,7 +791,7 @@
                     
                     <div class="form-group">
                         <label for="hourlyRate">Óradíj (Ft/óra)</label>
-                        <input type="number" id="hourlyRate" min="1000" value="5000" onchange="calculateSavings()">
+                        <input type="number" id="hourlyRate" min="1000" placeholder="Írja be a kolléga óradíját" onchange="calculateSavings()">
                     </div>
                 </div>
                 
@@ -805,6 +809,15 @@
                     <h2 id="yearlySavings">0 Ft</h2>
                     <p>Éves megtakarítás</p>
                     <p id="monthlySavings" style="font-size: 16px; margin-top: 10px;"></p>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin-top: 30px; text-align: center;">
+                    <p style="font-weight: 600; font-size: 18px; color: #333; margin-bottom: 20px;">
+                        Foglaljon időpontot egy 30 perces konzultációra – nézzük meg, hogyan tudunk segíteni vállalkozásának!
+                    </p>
+                    <a href="https://calendly.com/gabor-ai/talk-to-gabor" target="_blank" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block; transition: all 0.3s ease;">
+                        Időpontfoglalás
+                    </a>
                 </div>
             </div>
         </div>
