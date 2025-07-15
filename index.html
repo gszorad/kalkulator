@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI és Automatizációs Megoldások - Megtakarítás Kalkulátor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        
+        .category {
+            margin-bottom: 30px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .category.expanded {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102,126,234,0.1);
+        }
+        
+        .category-title {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+        
+        .category-title:hover {
+            background: #eef1f5;
+        }
+        
+        .category.expanded .category-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .category.expanded .category-content {
+            max-height: 3000px;
+        }
+        
+        .category-description {
+            padding: 20px 25px;
+            background: #f8f9fa;
+            color: #555;
+            line-height: 1.6;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .category-description strong {
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+        
+        .category-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .category.expanded .category-icon {
+            background: white;
+            color: #667eea;
+        }
+        
+        .category-expand-icon {
+            margin-left: auto;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .category.expanded .category-expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .solution-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin: 10px 25px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .solution-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102,126,234,0.1);
+        }
+        
+        .solution-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        
+        .solution-header:hover {
+            background: #f8f9fa;
+        }
+        
+        .solution-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+            flex: 1;
+        }
+        
+        .expand-icon {
+            width: 24px;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .solution-card.expanded .expand-icon {
+            background: #667eea;
+            color: white;
+            transform: rotate(180deg);
+        }
+        
+        .solution-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .solution-card.expanded .solution-content {
+            max-height: 500px;
+        }
+        
+        .solution-description {
+            padding: 0 20px 20px 20px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 20px 20px 20px;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+        
+        .calculator-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        
+        .calculator-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .calculator-icon {
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .result-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .result-box h2 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .result-box p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .hourly-calculator {
+            background: #e8eaf6;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .hourly-result {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 10px;
+        }
+        
+        .back-btn {
+            background: #e0e0e0;
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .back-btn:hover {
+            background: #d0d0d0;
+        }
+        
+        .selected-solution {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .selected-solution h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+        
+        .savings-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI és Automatizációs Megoldások</h1>
+            <p>Számítsa ki, mennyit takaríthat meg vállalkozásának!</p>
+        </div>
+        
+        <div class="content">
+            <!-- Első képernyő: Megoldás választás -->
+            <div class="screen active" id="screen1">
+                <h2 style="margin-bottom: 30px; color: #333;">Válasszon megoldást az alábbiak közül:</h2>
+                
+                <!-- Chatbotok -->
+                <div class="category">
+                    <div class="category-title" onclick="toggleCategory(this)">
+                        <div class="category-icon">💬</div>
+                        Chatbotok
+                        <div class="category-expand-icon">▼</div>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-description">
+                            <strong>Használj chatbotokat arra, hogy külső kommunikációt folytass az ügyfeleiddel, válaszolj gyakori kérdésekre tudásbázis alapján, vagy belsőleg segítsd az új csapattagok betanulását.</strong>
+                            A chatbotok 24/7-es kapacitást adnak neked anélkül, hogy bővítened kellene a csapatot. Segítenek automatizálni az ismétlődő kommunikációt és szabadidőt biztosítanak a csapatodnak az értékteremtő munkára.
+                        </div>
+                        
+                        <div class="solution-card" data-solution="whatsapp-real-estate">
+                            <div class="solution-header" onclick="toggleCard(this)">
+                                <div class="solution-title">WhatsApp chatbot ingatlan lead minősítéshez</div>
+                                <span class="savings-badge">50% megtakarítás</span>
+                                <div class="expand-icon">▼</div>
+                            </div>
+                            <div class="solution-content">
+                                <p class="solution-description">Dubai-i ingatl
