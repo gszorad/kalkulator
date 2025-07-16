@@ -369,6 +369,26 @@
             margin-left: 10px;
             white-space: nowrap;
         }
+        
+        @media (max-width: 768px) {
+            .solution-header {
+                flex-wrap: wrap;
+            }
+            
+            .solution-title {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+            
+            .savings-badge {
+                margin-left: 0;
+                margin-right: auto;
+            }
+            
+            .expand-icon {
+                margin-left: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -407,7 +427,7 @@
                         <div class="solution-card" data-solution="whatsapp-real-estate">
                             <div class="solution-header" onclick="toggleCard(this)">
                                 <div class="solution-title">WhatsApp chatbot ingatlan lead minősítéshez</div>
-                                <span class="savings-badge">50% megtakarítás</span>
+                                <span class="savings-badge">50% időmegtakarítás</span>
                                 <div class="expand-icon">▼</div>
                             </div>
                             <div class="solution-content">
